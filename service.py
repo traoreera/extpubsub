@@ -5,7 +5,7 @@ from .provider import (
     PubSubConf, 
     PubSubProvider
 )
-from xcore.services import BaseService, ServiceStatus, action
+from xcore.services import BaseService, ServiceStatus
 from typing import Any, List, Optional
 
 
@@ -44,19 +44,19 @@ class PubSubclient(BaseService):
             await self.provider.close()
             self._status = ServiceStatus.STOPPED
 
-    @action
+    
     async def publish(self, channel: str, identified: str, msg: str):
         """Action exposée pour publier un message"""
         if self.provider:
             await self.provider.publish(channel, {"user_id": identified, "text": msg})
 
-    @action
+    
     async def stream(self, channel: str, identified: str, filter_key: str = "user_id"):
         """Action exposée pour streamer des messages (compatible SSE)"""
         if self.provider:
             return self.provider.stream(channel, identified, filter_key)
 
-    @action
+    
     async def bulk_publish(self, channel: str, identified: List[str], msg: str):
         """Action exposée pour l'envoi groupé"""
         if self.provider:

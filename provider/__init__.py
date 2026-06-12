@@ -1,15 +1,15 @@
-from .hyvemq import HivemqAdapter
-from .redis import RedisAdapter
-from .memory import MemoryAdapter
-from .section import HivemqConfig, RedisConfig, MemoryConfig, PubSubConf
 from .base import PubSubProvider
+from .hyvemq import HivemqAdapter
+from .memory import MemoryAdapter
+from .redis import RedisAdapter
+from .section import HivemqConfig, MemoryConfig, PubSubConf, RedisConfig
 
 __all__ = [
     "RedisAdapter",
     "HivemqAdapter",
     "MemoryAdapter",
-    "HivemqConfig", 
-    "RedisConfig", 
+    "HivemqConfig",
+    "RedisConfig",
     "MemoryConfig",
     "PubSubConf",
     "PubSubProvider"

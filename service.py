@@ -1,12 +1,9 @@
-from .provider import (
-    HivemqAdapter,
-    RedisAdapter,
-    MemoryAdapter,
-    PubSubConf,
-    PubSubProvider
-)
-from xcore.services import BaseService, ServiceStatus
 from typing import Any, AsyncGenerator, List, Optional
+
+from xcore.services import BaseService, ServiceStatus
+
+from .provider import (HivemqAdapter, MemoryAdapter, PubSubConf,
+                       PubSubProvider, RedisAdapter)
 
 
 class PubSubClient(BaseService):
@@ -80,10 +77,10 @@ class PubSubClient(BaseService):
         if self.provider:
             return True, "service working"
         return False, "service not working"
-    
+
     def status(self):
 
         return {
-            "provider":self.conf.provider,
+            "provider": self.conf.provider,
             "status": self._status.value
         }

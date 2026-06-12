@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import AsyncGenerator, Optional, Any
+from typing import Any, AsyncGenerator, Optional
+
 
 class PubSubProvider(ABC):
-    
+
     @abstractmethod
     async def connect(self) -> None:
         pass
@@ -17,9 +18,9 @@ class PubSubProvider(ABC):
 
     @abstractmethod
     async def stream(
-        self, 
-        channel: str, 
-        user_id: Optional[str] = None, 
+        self,
+        channel: str,
+        user_id: Optional[str] = None,
         filter_key: str = "user_id"
     ) -> AsyncGenerator[str, None]:
         pass

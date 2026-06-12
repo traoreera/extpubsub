@@ -1,13 +1,16 @@
-import json
 import asyncio
+import json
 import logging
-from .section import RedisConfig
-from .base import PubSubProvider
-from typing import Optional, AsyncGenerator
-from redis.asyncio import Redis, ConnectionPool
+from typing import AsyncGenerator, Optional
+
+from redis.asyncio import ConnectionPool, Redis
 from redis.exceptions import RedisError
 
+from .base import PubSubProvider
+from .section import RedisConfig
+
 logger = logging.getLogger(__name__)
+
 
 class RedisAdapter(PubSubProvider):
 
@@ -37,11 +40,12 @@ class RedisAdapter(PubSubProvider):
         if self._pool:
             await self._pool.disconnect()
         return True, "closed"
-    
+
     async def publish(self, channel: str, event: dict):
         if not self.svc:
-            raise RuntimeError("Redis provider not initialized. Call connect() first.")
-        
+            raise RuntimeError(
+                "Redis provider not initialized. Call connect() first.")
+
         try:
             await self.svc.publish(
                 channel=channel, message=json.dumps(event)
@@ -78,8 +82,8 @@ class RedisAdapter(PubSubProvider):
 
                 except RedisError as e:
                     logger.error(f"Redis stream error: {e}")
-                    await asyncio.sleep(1) # Backoff
-                
+                    await asyncio.sleep(1)  # Backoff
+
                 await asyncio.sleep(self._conf.heartbeat)
 
         finally:

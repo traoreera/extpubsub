@@ -1,22 +1,24 @@
 import asyncio
 import json
+import logging
 import ssl
 import uuid
-import logging
-from typing import Optional, AsyncGenerator, Callable, Awaitable
+from typing import AsyncGenerator, Awaitable, Callable, Optional
+
+import aiomqtt
+
 from .base import PubSubProvider
 from .section import HivemqConfig
 
 logger = logging.getLogger(__name__)
 
-import aiomqtt
 
 # ------------------------------------------------------------------ #
 #  Types des callbacks                                                 #
 # ------------------------------------------------------------------ #
 
-OnMessageCallback    = Callable[[str, dict], Awaitable[None]]
-OnConnectCallback    = Callable[[], Awaitable[None]]
+OnMessageCallback = Callable[[str, dict], Awaitable[None]]
+OnConnectCallback = Callable[[], Awaitable[None]]
 OnDisconnectCallback = Callable[[Exception | None], Awaitable[None]]
 
 
@@ -32,8 +34,8 @@ class HivemqAdapter(PubSubProvider):
         self._listen_task: Optional[asyncio.Task] = None
 
         # Callbacks — None par défaut, tous optionnels
-        self._on_message:    Optional[OnMessageCallback]    = None
-        self._on_connect:    Optional[OnConnectCallback]    = None
+        self._on_message:    Optional[OnMessageCallback] = None
+        self._on_connect:    Optional[OnConnectCallback] = None
         self._on_disconnect: Optional[OnDisconnectCallback] = None
 
     # ------------------------------------------------------------------ #
@@ -251,7 +253,8 @@ class HivemqAdapter(PubSubProvider):
         try:
             while True:
                 if not self._connected.is_set():
-                    logger.info("Stream '%s' en attente de reconnexion…", channel)
+                    logger.info(
+                        "Stream '%s' en attente de reconnexion…", channel)
                     await self._connected.wait()
 
                 try:

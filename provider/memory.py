@@ -1,8 +1,10 @@
 import asyncio
 import json
+from typing import AsyncGenerator, Dict, Optional, Set
+
 from .base import PubSubProvider
 from .section import MemoryConfig
-from typing import Optional, AsyncGenerator, Dict, Set
+
 
 class MemoryAdapter(PubSubProvider):
     def __init__(self, config: MemoryConfig) -> None:
@@ -15,7 +17,7 @@ class MemoryAdapter(PubSubProvider):
     async def close(self) -> None:
         for channel in self._queues:
             for q in self._queues[channel]:
-                await q.put(None) # Sentinel to close generators
+                await q.put(None)  # Sentinel to close generators
         self._queues.clear()
 
     async def publish(self, channel: str, event: dict) -> None:
@@ -24,9 +26,9 @@ class MemoryAdapter(PubSubProvider):
                 await q.put(event)
 
     async def stream(
-        self, 
-        channel: str, 
-        user_id: Optional[str] = None, 
+        self,
+        channel: str,
+        user_id: Optional[str] = None,
         filter_key: str = "user_id"
     ) -> AsyncGenerator[str, None]:
         q = asyncio.Queue()
@@ -39,10 +41,10 @@ class MemoryAdapter(PubSubProvider):
                 event = await q.get()
                 if event is None:
                     break
-                
+
                 if user_id is None or event.get(filter_key) == user_id:
                     yield f"data: {json.dumps(event)}\n\n"
-                
+
                 await asyncio.sleep(self._conf.heartbeat)
         finally:
             if channel in self._queues:
